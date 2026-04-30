@@ -1,4 +1,4 @@
-package jwtPractice.jwtPractice.Service;
+package jwtPractice.jwtPractice.Security;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
