@@ -1,6 +1,7 @@
 package jwtPractice.jwtPractice.Service;
 
 import jwtPractice.jwtPractice.DTOs.UserDTO;
+import jwtPractice.jwtPractice.Exception.UserNotFound;
 import jwtPractice.jwtPractice.Model.User;
 import jwtPractice.jwtPractice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,11 @@ public class UserService {
     public User findUserById(UUID id){
 
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFound("Usuário não encontrado"));
+    }
+
+    public User findyByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow( () -> new UserNotFound("Usuário não encontrado"));
     }
 
     public void updateUser(UUID id, UserDTO dto){
@@ -50,7 +55,7 @@ public class UserService {
         validateInput(dto);
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFound("Usuário não encontrado"));
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
@@ -62,7 +67,7 @@ public class UserService {
     public void deleteUser(UUID id){
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new UserNotFound("Usuário não encontrado"));
 
         userRepository.delete(user);
     }
