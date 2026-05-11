@@ -5,6 +5,7 @@ import jwtPractice.jwtPractice.Exception.UserNotFound;
 import jwtPractice.jwtPractice.Model.User;
 import jwtPractice.jwtPractice.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     private void validateInput(UserDTO dto){
 
@@ -30,7 +32,7 @@ public class UserService {
         User user = User.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
-                .password(dto.getPassword())
+                .password(passwordEncoder.encode(dto.getPassword()))
                 .role(dto.getRole())
                 .build();
 
@@ -60,7 +62,7 @@ public class UserService {
 
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         userRepository.save(user);
     }
