@@ -18,36 +18,44 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
 
-    public String generateToken(User user){
+    public String generateToken(User user) {
 
         try {
-            var algorithm = Algorithm.HMAC256(secret);
+
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
             return JWT.create()
                     .withIssuer("API-practiceJWT")
-                    .withSubject(user.getName())
                     .withSubject(user.getEmail())
-                    .withExpiresAt(validDate())
+                    .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
-            throw new RuntimeException("Erro ao gerar token: " + exception);
-        }
 
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar token", exception);
+        }
     }
 
-    public String validateToken(String token){
+    public String validateToken(String token) {
+
         try {
-            var algorithm = Algorithm.HMAC256(secret);
+
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
             return JWT.require(algorithm)
                     .withIssuer("API-practiceJWT")
                     .build()
                     .verify(token)
                     .getSubject();
-        } catch (JWTVerificationException exception){
-            throw new RuntimeException("TOKEN INVÁLIDO | EXPIRADO");
+
+        } catch (JWTVerificationException exception) {
+            return null;
         }
     }
 
-    public Instant validDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+    private Instant generateExpirationDate() {
+
+        return LocalDateTime.now()
+                .plusHours(2)
+                .toInstant(ZoneOffset.of("-03:00"));
     }
 }
